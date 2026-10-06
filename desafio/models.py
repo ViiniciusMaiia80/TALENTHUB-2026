@@ -18,6 +18,11 @@ class Avaliacao(models.Model):
     class Meta:
         managed = False
         db_table = 'avaliacao'
+        verbose_name = 'Avaliação'
+        verbose_name_plural = 'Avaliações'
+        
+    def __str__(self):
+        return f"Avaliação {self.id} - Nota: {self.nota}"
 
 
 class Desafio(models.Model):
@@ -38,7 +43,11 @@ class Desafio(models.Model):
     class Meta:
         managed = False
         db_table = 'desafio'
-
+        verbose_name = 'Desafio'
+        verbose_name_plural = 'Desafios'
+        
+    def __str__(self):
+        return f"Desafio {self.titulo} - Empresa: {self.empresa.razao_social}"
 class Empresa(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)    
     razao_social = models.CharField(max_length=100)
@@ -48,7 +57,11 @@ class Empresa(models.Model):
     class Meta:
         managed = False
         db_table = 'empresa'
-
+        verbose_name = 'Empresa'
+        verbose_name_plural = 'Empresas'
+        
+    def __str__(self):
+        return f"Empresa {self.razao_social}" 
 
 class Interesseprofissional(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)    
@@ -61,7 +74,11 @@ class Interesseprofissional(models.Model):
     class Meta:
         managed = False
         db_table = 'interesseprofissional'
-
+        verbose_name = 'Interesse Profissional'
+        verbose_name_plural = 'Interesses Profissionais'
+        
+    def __str__(self):
+        return f"Interesse Profissional {self.id} - Empresa: {self.empresa.razao_social} - Participação: {self.participacao.id}"
 
 class Participacao(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -76,6 +93,11 @@ class Participacao(models.Model):
     class Meta:
         managed = False
         db_table = 'participacao'
+        verbose_name = 'Participação'
+        verbose_name_plural = 'Participações'
+       
+    def __str__(self):
+        return f"Participação {self.id} - Estudante: {self.estudante.usuario.nome} - Desafio: {self.desafio.titulo} - Empresa: {self.empresa.razao_social}"
 
 
 class Perfilestudante(models.Model):
@@ -89,7 +111,8 @@ class Perfilestudante(models.Model):
     class Meta:
         managed = False
         db_table = 'perfilestudante'
-
+        verbose_name = 'Perfil Estudante'
+        verbose_name_plural = 'Perfis Estudantes'
 
 class Reconhecimento(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -102,7 +125,8 @@ class Reconhecimento(models.Model):
     class Meta:
         managed = False
         db_table = 'reconhecimento'
-
+        verbose_name = 'Reconhecimento'
+        verbose_name_plural = 'Reconhecimentos'
 
 class Usuario(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -113,3 +137,5 @@ class Usuario(models.Model):
     class Meta:
         managed = False
         db_table = 'usuario'
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
