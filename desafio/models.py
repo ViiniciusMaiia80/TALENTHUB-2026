@@ -36,8 +36,8 @@ class Desafio(models.Model):
     requisitos = models.TextField()
     entregaveis = models.TextField()
     criterios_avaliativos = models.TextField()
-    status = models.CharField(max_length=20)
-    nivel = models.CharField(max_length=33)
+    status = models.ForeignKey('Statusentrega', models.DO_NOTHING, db_column='status', blank=True, null=True)
+    nivel = models.ForeignKey('Niveis', models.DO_NOTHING, db_column='nivel')
     empresa = models.ForeignKey('Empresa', models.CASCADE)
 
     class Meta:
@@ -49,7 +49,9 @@ class Desafio(models.Model):
     def __str__(self):
         return f"Desafio {self.titulo} - Empresa: {self.empresa.razao_social}"
 class Empresa(models.Model):
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)    
+    cnpj = models.CharField(max_length=14, unique=True)
     razao_social = models.CharField(max_length=100)
     descricao = models.TextField()
     contato = models.TextField(blank=True, null=True)
@@ -67,7 +69,7 @@ class Interesseprofissional(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)    
     mensagem = models.TextField()
     data_envio = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(max_length=33)
+    status = models.ForeignKey('Statusentrega', models.DO_NOTHING, db_column='status')
     empresa = models.ForeignKey(Empresa, models.CASCADE)
     participacao = models.ForeignKey('Participacao', models.CASCADE)
 
@@ -80,10 +82,39 @@ class Interesseprofissional(models.Model):
     def __str__(self):
         return f"Interesse Profissional {self.id} - Empresa: {self.empresa.razao_social} - Participação: {self.participacao.id}"
 
+class Listreconhecimento(models.Model):
+    item = models.CharField(unique=True, max_length=33, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'listreconhecimento'
+        verbose_name = 'Lista de Reconhecimento'
+        verbose_name_plural = 'Listas de Reconhecimento'
+
+
+class Niveis(models.Model):
+    nivel = models.CharField(max_length=33)
+
+    class Meta:
+        managed = False
+        db_table = 'niveis'
+        verbose_name = 'Nível'
+        verbose_name_plural = 'Níveis'
+
+class Statusentrega(models.Model):
+    status = models.CharField(max_length=33)
+
+    class Meta:
+        managed = False
+        db_table = 'statusentrega'
+        verbose_name = 'Status de Entrega'
+        verbose_name_plural = 'Status de Entregas'
+
+
 class Participacao(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     data_adesao = models.DateTimeField()
-    status = models.CharField(max_length=20, blank=True, null=True)
+    status = models.ForeignKey('Statusentrega', models.DO_NOTHING, db_column='status')
     data_entrega = models.DateTimeField(blank=True, null=True)
     entrega_url = models.TextField(blank=True, null=True)
     estudante = models.ForeignKey('Perfilestudante', models.CASCADE)
