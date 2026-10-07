@@ -62,6 +62,7 @@ class TalentHubApiTestCase(APITestCase):
             format='json',
         )
         self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data['nivel'], 'Intermediário')
         return response.data['id']
 
     def test_student_can_register_and_login_with_hashed_password(self):

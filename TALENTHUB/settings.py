@@ -133,7 +133,10 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in config(
         'CORS_ALLOWED_ORIGINS',
-        default='https://talent-hubbb.lovable.app',
+        default=(
+            'https://talent-hubbb.lovable.app,'
+            'http://localhost:5173,http://127.0.0.1:5173'
+        ),
     ).split(',')
     if origin.strip()
 ]

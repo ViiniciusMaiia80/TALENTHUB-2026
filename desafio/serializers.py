@@ -31,6 +31,16 @@ class CommaSeparatedListField(serializers.Field):
         return ', '.join(normalized)
 
 
+class NivelNomeField(serializers.Field):
+    def to_representation(self, value):
+        return value.nivel
+
+    def to_internal_value(self, data):
+        if not isinstance(data, str) or not data.strip():
+            raise serializers.ValidationError('Informe o nível do desafio.')
+        return data.strip()
+
+
 class EstudanteCadastroSerializer(serializers.Serializer):
     nome = serializers.CharField(max_length=100)
     email = serializers.EmailField()
@@ -179,7 +189,7 @@ class EmpresaSerializer(serializers.ModelSerializer):
 
 class DesafioSerializer(serializers.ModelSerializer):
     tecnologias = CommaSeparatedListField()
-    nivel = serializers.CharField()
+    nivel = NivelNomeField()
     empresa = serializers.SerializerMethodField()
     status = serializers.CharField(source='status.status', read_only=True)
 

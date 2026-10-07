@@ -53,3 +53,21 @@ python manage.py runserver
 ```
 
 As contas guardam senhas usando os hashers do Django; os tokens bearer são aleatórios e armazenados no banco somente como hash. O acesso a perfis, entregas, avaliações e oportunidades é limitado ao estudante ou à empresa responsável.
+
+## Frontend React
+
+O frontend React usa Vite e consome a API Django em `/api/`. No desenvolvimento, o Vite encaminha as chamadas ao backend local. Com as dependências Python e PostgreSQL já configurados, execute em dois terminais:
+
+```bash
+# Terminal 1 — API
+.venv/bin/python manage.py migrate
+.venv/bin/python manage.py runserver
+
+# Terminal 2 — frontend
+npm install
+npm run dev
+```
+
+Abra o endereço indicado pelo Vite (normalmente `http://localhost:5173`). Para apontar o proxy a outro backend, defina `DJANGO_API_URL`; para uma API hospedada em outro domínio, defina `VITE_API_URL` e autorize a origem do frontend em `CORS_ALLOWED_ORIGINS` no ambiente Django. Um exemplo de configuração do frontend está em `.env.frontend.example`.
+
+A interface inclui landing page, cadastro/login de estudantes e empresas, busca filtrável de desafios, dashboards, gestão de participação, envio de entregas, avaliação com feedback e reconhecimentos, oportunidades profissionais e edição de perfil. Para compilar a versão de produção, use `npm run build`; os arquivos são gerados em `dist/`.
