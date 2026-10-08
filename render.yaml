@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: talenthub-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn TALENTHUB.wsgi:application
