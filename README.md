@@ -43,9 +43,9 @@ No Windows, ative o ambiente com:
 .venv\Scripts\activate
 ```
 
-O Django precisa de uma `SECRET_KEY`. Defina-a no ambiente ou em um arquivo `.env` na raiz do projeto. Também é possível configurar `DEBUG` e `CORS_ALLOWED_ORIGINS`; as origens CORS padrão incluem o frontend local em `http://localhost:5173` e `http://127.0.0.1:5173`.
+Copie `TALENTHUB/.env.example` para `TALENTHUB/.env` e configure a `SECRET_KEY` e as credenciais do PostgreSQL nesse arquivo. Defina também `DEBUG`, `ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS` conforme o ambiente; as origens CORS padrão incluem o frontend local em `http://localhost:5173` e `http://127.0.0.1:5173`. Não versione o arquivo `.env` preenchido.
 
-O backend está configurado para usar PostgreSQL. Crie o banco de dados e confira os parâmetros de conexão em `TALENTHUB/settings.py` antes de iniciar. Em seguida, aplique as migrações e execute a API:
+O backend usa PostgreSQL. Crie o banco definido em `DB_NAME` e, em seguida, aplique as migrações e execute a API:
 
 ```bash
 python manage.py migrate
@@ -85,7 +85,24 @@ Execute os testes do backend com:
 python manage.py test
 ```
 
-Os testes cobrem a API, os modelos e as regras de domínio de participação e desafios.
+Os testes do backend cobrem regras de domínio e os fluxos integrados da API. Os testes do frontend validam a camada HTTP, incluindo o evento Observer de sessão expirada. O smoke test de sistema inicia Django e Vite e valida a comunicação HTTP do frontend com a API pelo proxy.
+
+O GitHub Actions executa o Ruff, a checagem do Django, testes unitários e integrados com PostgreSQL, ESLint, testes unitários do frontend, build e smoke test de conectividade em pushes e pull requests para `main` e `develop`.
+
+Para executar as mesmas verificações localmente:
+
+```bash
+python -m pip install -r requirements-dev.txt
+npm ci
+ruff check TALENTHUB desafio
+python manage.py check
+python manage.py test
+npm run lint
+npm test
+npm run build
+python manage.py migrate
+npm run test:system
+```
 
 ## API
 
