@@ -17,6 +17,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from desafio.domain.filters import BuscaDesafioStrategy, FILTROS_DESAFIOS
 from desafio.domain.state import ParticipacaoContext
 from desafio.models import (
     Avaliacao,
@@ -190,29 +191,11 @@ class DesafiosView(APIView):
         )
         query = request.query_params.get('q')
         if query:
-            desafios = desafios.filter(
-                Q(titulo__icontains=query)
-                | Q(descricao__icontains=query)
-                | Q(tecnologias__icontains=query)
-                | Q(area__icontains=query)
-                | Q(empresa__razao_social__icontains=query)
-            )
-        for parameter, field in (
-            ('area', 'area__icontains'),
-            ('nivel', 'nivel__nivel__iexact'),
-            ('tecnologia', 'tecnologias__icontains'),
-            ('empresa', 'empresa__razao_social__icontains'),
-        ):
+            desafios = BuscaDesafioStrategy().aplicar(desafios, query)
+        for parameter, strategy in FILTROS_DESAFIOS.items():
             value = request.query_params.get(parameter)
             if value:
-                desafios = desafios.filter(**{field: value})
-        prazo = request.query_params.get('prazo')
-        if prazo:
-            try:
-                dias = int(prazo)
-            except ValueError as error:
-                raise ValidationError({'prazo': 'Informe o prazo em dias.'}) from error
-            desafios = desafios.filter(prazo=dias)
+                desafios = strategy.aplicar(desafios, value)
         return Response(DesafioSerializer(desafios, many=True).data)
 
     def post(self, request):

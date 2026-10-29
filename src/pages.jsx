@@ -21,8 +21,6 @@ import {
   HeartHandshake,
   Layers3,
   LockKeyhole,
-  Mail,
-  MapPin,
   Rocket,
   Search,
   Send,
@@ -788,18 +786,18 @@ export function CompanyReviewsPage({ talentsOnly = false }) {
   const { data, loading, error, setData } = useResource('/participations/', token);
   const items = (data || []).filter((item) => talentsOnly ? Boolean(item.avaliacao) : item.status === 'Submetido');
   const title = talentsOnly ? 'Talentos que você conheceu.' : 'Avalie entregas e compartilhe feedback.';
-  const [actionError, setActionError] = useState('');
+  const [actionError] = useState('');
   return (
     <div className="page-stack">
       <SectionTitle eyebrow={talentsOnly ? 'POTENCIAL EM AÇÃO' : 'AVALIAÇÃO E FEEDBACK'} title={talentsOnly ? title : 'Entregas recebidas.'} description={talentsOnly ? 'Estudantes que demonstraram suas habilidades nas soluções.' : 'Analise as soluções dos participantes e ajude cada talento a crescer.'} />
       <ErrorMessage>{actionError}</ErrorMessage>
-      {loading ? <Loading /> : error ? <PageLoadError error={error} /> : items.length ? <div className="talent-list">{items.map((item) => <TalentReviewCard key={item.id} participation={item} token={token} talentsOnly={talentsOnly} setData={setData} setActionError={setActionError} />)}</div>
+      {loading ? <Loading /> : error ? <PageLoadError error={error} /> : items.length ? <div className="talent-list">{items.map((item) => <TalentReviewCard key={item.id} participation={item} token={token} talentsOnly={talentsOnly} setData={setData} />)}</div>
         : <EmptyState icon={talentsOnly ? Sparkles : FileCheck2} title={talentsOnly ? 'Talentos avaliados aparecem aqui' : 'Nenhuma entrega para avaliar'} description={talentsOnly ? 'Depois de avaliar uma entrega, você poderá revisitar o perfil do participante.' : 'As entregas enviadas pelos estudantes serão listadas aqui.'} />}
     </div>
   );
 }
 
-function TalentReviewCard({ participation, token, talentsOnly, setData, setActionError }) {
+function TalentReviewCard({ participation, token, talentsOnly, setData }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ nota: '', feedback: '', reconhecimento_tipo: '', competencias: '' });
   const [invite, setInvite] = useState(false);
@@ -860,7 +858,6 @@ function TalentReviewCard({ participation, token, talentsOnly, setData, setActio
 export function ProfilePage() {
   const { token, user, refreshUser } = useAuth();
   const { data, loading, error } = useResource('/profile/', token);
-  const navigate = useNavigate();
   const company = user?.tipo_perfil === 'empresa';
   const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);

@@ -172,6 +172,21 @@ class TalentHubApiTestCase(APITestCase):
         self.assertEqual(student_dashboard.data['indicadores']['badges'], 1)
         self.assertEqual(student_dashboard.data['indicadores']['oportunidades'], 1)
 
+    def test_challenge_filter_strategies_and_invalid_deadline(self):
+        company_token = self.cadastrar_empresa()
+        self.publicar_desafio(company_token)
+
+        listing = self.client.get(
+            '/api/challenges/?q=Dashboard&area=Dados&nivel=Intermediário'
+            '&tecnologia=Python&empresa=Tech&prazo=7'
+        )
+        self.assertEqual(listing.status_code, 200, listing.data)
+        self.assertEqual(len(listing.data), 1)
+
+        invalid_deadline = self.client.get('/api/challenges/?prazo=uma-semana')
+        self.assertEqual(invalid_deadline.status_code, 400)
+        self.assertIn('prazo', invalid_deadline.data)
+
     def test_company_cannot_evaluate_another_companys_participation(self):
         original_company = self.cadastrar_empresa()
         challenge_id = self.publicar_desafio(original_company)
